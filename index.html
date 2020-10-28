@@ -11,27 +11,45 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Fire Station Hub</title>
   <link href="style.css" rel="stylesheet" type="text/css">
-  <script src="main.js" type="module"></script>
+  <script type="module">
+    document.addEventListener('DOMContentLoaded', (event) => {
+      document.querySelector('input#query').addEventListener((event) => {
+
+      })
+    })
+  </script>
+
 </head>
 <body>
   <nav>
     <a href="index.html">Fire Station Hub</a>
-    <a href="duty.html">Daily Duty Report</a>
+    <a
+        href="https://uscedu-my.sharepoint.com/personal/johncl_usc_edu/_layouts/15/Doc.aspx?sourcedoc={511d5a72-d2ff-46c7-a82d-f19de320b3bc}&action=embedview&wdAllowInteractivity=False&wdHideGridlines=True&wdHideHeaders=True&wdDownloadButton=True&wdInConfigurator=True"
+        title="Daily Duty Coverage"
+    >Daily Duty Coverage
+    </a>
   </nav>
   <main>
     <section class="search">
       <header>Fire Station Hub</header>
-      <header>USC > UCLA</header>
       <label for="query"></label>
       <input
-            autocapitalize="off"
-            autocomplete="off"
-            autofocus
-            id="query"
-            name="query"
-            placeholder="Search for a document"
-            type="search"
-        >
+          autocapitalize="off"
+          autocomplete="off"
+          autofocus
+          id="query"
+          name="query"
+          placeholder="Search for a document"
+          type="search"
+      >
+      <!-- <iframe width="402" height="346" frameborder="0" scrolling="no" src="https://uscedu-my.sharepoint.com/personal/johncl_usc_edu/_layouts/15/Doc.aspx?sourcedoc={511d5a72-d2ff-46c7-a82d-f19de320b3bc}&action=embedview&wdAllowInteractivity=False&wdHideGridlines=True&wdHideHeaders=True&wdDownloadButton=True&wdInConfigurator=True"></iframe> -->
+    </section>
+    <section class="results">
+      <div class="result">
+        <cite>2019-10-31T00:15:15Z</cite>
+        <header>ET-268.pdf</header>
+        <p></p>
+      </div>
     </section>
   </main>
 </body>

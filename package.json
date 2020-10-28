@@ -2,7 +2,7 @@
   "name": "firestationhub",
   "version": "1.0.0",
   "description": "**Fire Station Hub &amp; Daily Situation Report** *CSCI 401*",
-  "main": "main.js",
+  "main": "search.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
