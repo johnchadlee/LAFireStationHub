@@ -163,118 +163,162 @@ To embed an Excel workbook, replicate the following procedure
 
 # Walkthrough
 
-> A ll the necessary commands, in order, attached below. These were the commands
+> All the necessary commands, in order, attached below. These were the commands
 > I used, start to finish, to create this web app
+>
 > -- Austin
 
 
-# Log into Azure account
+* Log into Azure account
 
-```shell script
-az login
-```
+    ```shell script
+    az login
+    ```
 
-# Set any subscription as the default, no charges will be incurred
+* Set any subscription as the default, no charges will be incurred
 
-```txt
+    ```shell script
+    az account set --subscription 'fshsubscription'
+    ```
 
-az account set --subscription 'fshsubscription'
+* Configure the default location
 
-# Configure the default location
-az configure --defaults location='westus'
+    ```shell script
+    az configure --defaults location='westus'
+    ```
 
-# Create a resource group
-az group create --name 'fshgroup'
-az configure --defaults group='fshgroup'
+* Create a resource group
 
-# Create an application service plan
-az appservice plan create --name 'fshappservice' --sku 'FREE'
+    ```shell script
+    az group create --name 'fshgroup' az configure --defaults group='fshgroup'
+    ```
 
-# Create a web application
-az webapp create --name 'fshwebapp' --plan 'fshappservice'
-az configure --defaults web='fshwebapp'
+* Create an application service plan
 
-# Create a storage account
-az storage account create --name 'fshstorage' --sku 'Standard_LRS' --kind 'StorageV2'
+    ```shell script
+    az appservice plan create --name 'fshappservice' --sku 'FREE'
+    ```
 
-# Create a storage container
-az storage container create --name 'fshcontainer' --account-name 'fshstorage' --auth-mode login
+* Create a web application
 
-# Grant owner-level permissions to a user within this resource group
-az role assignment create --role 'Storage Blob Data Owner' --assignee 'austin.traver@fire.lacounty.gov' --resource-group 'fshgroup'
+    ```shell script
+    az webapp create --name 'fshwebapp' --plan 'fshappservice'
+    ```
 
-# Upload all files in the current directory into Azure Blob Storage
-az storage blob upload-batch --source ${PWD} --destination 'fshcontainer' --account-name 'fshstorage' --auth-mode 'login'
+* Set this web application to be the default chosen by `az`
 
-# Create a cognitive search service
-az search service create --name 'fshsearch' --sku 'free'
+    ```shell script
+    az configure --defaults web='fshwebapp'
+    ```
 
-# Get the primary admin key for the Cognitive Search service
-az search admin-key show --service-name 'fshsearch'
+* Create a storage account
 
-# https://docs.microsoft.com/en-us/azure/search/search-get-started-portal
-# Use Azure's "import data wizard" to create a search index
-# for the PDF files uploaded to blob storage
-# These were the commands I used, start to finish, to create this web app
-# - Austin Traver
+    ```shell script
+    az storage account create --name 'fshstorage' --sku 'Standard_LRS' --kind 'StorageV2'
+    ```
 
-# -----------------------------
+* Create a storage container
 
-# [Connect to your data]
-# ======================
-# Data source name: fshdatasource
-# Connection string:
-#   -> "Choose an existing connection" (fshstorage > fshcontainer)
-# [ ] "Authenticate using managed identity"
-# Container name: fshcontainer
-# Blob folder: <empty>
-# Description: <empty>
+    ```shell script
+    az storage container create --name 'fshcontainer' --account-name 'fshstorage' --auth-mode login
+    ```
 
-# -----------------------------
+* Grant owner-level permissions to a user within this resource group
 
-# [Add cognitive skills (optional)]
-# =================================
-# Add enrichments
-# Skillset name: fshskillset
-# [x] Enable OCR and merge all text into merged_content field
-# Save enrichments to a knowledge store
-# Storage account connection string
-#   -> "Choose an existing connection" (fshstorage > fshcontainer)
-# Azure blob projections
-# [x] Document
-# Container name: fshcontainer
+    ```shell script
+    az role assignment create --role 'Storage Blob Data Owner' --assignee 'austin.traver@fire.lacounty.gov' --resource-group 'fshgroup'
+    ```
 
-# -----------------------------
+* Upload all files in the current directory into Azure Blob Storage
 
-# [Customize target index]
-# ========================
-# Index name: fshindex
+    ```shell script
+    az storage blob upload-batch --source ${PWD} --destination 'fshcontainer' --account-name 'fshstorage' --auth-mode 'login'
+    ```
 
-# -----------------------------
+* Create a cognitive search service
 
-# [Create an indexer]
-# ===================
-# Name: fshindexer
-# Schedule: daily
-
-# -----------------------------
-
-# 🎉 Submit 🎉
-
-
-# ...
-
-# JavaScript SDK Quickstart
-# https://docs.microsoft.com/en-us/azure/search/search-get-started-javascript
-# npm install @azure/search-documents
-# npm install dotenv
-
-# From the Azure web portal:
-# -> Dashboard -> Search service -> fshsearch -> Settings > Keys
-# (copy the "Primary admin key")
-# edit .env and change the value of SEARCH_API_KEY
-# e.g. SEARCH_API_KEY=7A27B85012A2A27B3665541D52E179FF
-
-```
+    ```shell script
+    az search service create --name 'fshsearch' --sku 'free'
+    ```
 
 ---
+
+# Setting up a cognitive search index
+
+First, Use
+[Azure's import data wizard](https://docs.microsoft.com/en-us/azure/search/search-get-started-portal)
+to create a search index for the PDF files, the ones uploaded to blob storage in
+the previous step above
+
+Included below are the fields that I changed. As a matter of convention, I
+provided all resources related to this fire station hub with names that had
+"fsh" prefixed to them.
+
+## Section 1: Connect to your data
+
+* Data source name: `fshdatasource`
+* Connection string:
+* "Choose an existing connection" (fshstorage > fshcontainer)
+* [ ] "Authenticate using managed identity"
+* Container name: fshcontainer
+* Blob folder: <empty>
+* Description: <empty>
+
+## Section 2: Add cognitive skills (optional)
+
+* Add enrichments
+* Skillset name: `fshskillset`
+* [x] Enable OCR and merge all text into merged_content field
+* Save enrichments to a knowledge store
+* Storage account connection string
+  *   *Choose an existing connection* (`fshstorage` > `fshcontainer`)
+* Azure blob projections
+* [x] Document
+* Container name: `fshcontainer`
+
+
+## Section 3: Customize target index
+
+* Index name: `fshindex`
+
+## Section 4: Create an indexer
+
+* Name: `fshindexer`
+* Schedule: `daily`
+
+## Final Steps
+
+🎉 You're done! 🎉
+
+Click `Submit`
+
+---
+
+# Testing the code locally
+
+Before doing so, I'd recommend reading the [JavaScript SDK Quickstart](https://docs.microsoft.com/en-us/azure/search/search-get-started-javascript)
+
+* Install the necessary modules
+
+    ```shell script
+    npm install @azure/search-documents
+    npm install dotenv
+    ```
+
+* Get the primary admin key for the Cognitive Search service
+
+    ```shell script
+    az search admin-key show --service-name 'fshsearch'
+    ```
+
+* Change the value of `SEARCH_API_KEY` in the [`.env`](/.env) file to the
+value of the primary admin key. For example:
+
+    ```txt
+    SEARCH_API_KEY=7A27B85012A2A27B3665541D52E179FF
+    ```
+
+If you're having trouble with this command, you can get the value from the
+Azure web portal as well. To do so, go to
+**Dashboard** > **Search service** > `fshsearch` > **Settings** > **Keys**
+and copy the value of the primary admin key.
