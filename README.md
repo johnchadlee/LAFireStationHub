@@ -34,6 +34,12 @@
     az login
     ```
 
+1. List the available subscriptions
+
+    ```shell script
+    az account list -o table
+    ```
+
 1. Set the [default subscription](https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az_group_create-optional-parameters)
 
     ```shell script
@@ -47,7 +53,7 @@
     ```
 
 1. [Create a resource group](https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az_group_create)
-(`FireStationGroup` in this example) and set it as the default
+. For instance, `FireStationGroup`. Set it to be the default resource group
 
     ```shell script
     az group create -n 'FireStationGroup'
@@ -55,22 +61,54 @@
     ```
 
 1. [Create an application service plan](https://docs.microsoft.com/en-us/cli/azure/appservice/plan?view=azure-cli-latest#az_appservice_plan_create)
-(`FireStationServicePlan` in this example)
+. For instance, `FireStationServicePlan`.
 
     ```shell script
     az appservice plan create --name 'FireStationServicePlan' --sku 'FREE'
     ```
 
-1. Create a web application `FireStationWebApp` within the application service plan `FireStationServicePlan`
+1. Create a web application. For instance, `FireStationWebApp`. Add it within the application service plan. For instance, `FireStationServicePlan`
 
     ```shell script
     az webapp create --name 'FireStationWebApp' --plan 'FireStationServicePlan'
     ```
 
-1. Set `FireStationWebApp` as the default web application
+1. Set the default web app. For instance, `FireStationWebApp`
 
     ```shell script
     az configure --defaults web='FireStationWebApp'
+    ```
+
+1. Follow the steps to configure Windows sub-system for Linux from the learning module in Microsoft's documentation titled [Get started with the Windows Subsystem for Linux](https://docs.microsoft.com/en-us/learn/modules/get-started-with-windows-subsystem-for-linux/)
+
+1. If the Windows Store is blocked, you may need to [Manually download Windows Subsystem for Linux distro packages](https://docs.microsoft.com/en-us/windows/wsl/install-manual), the steps from the article have been included below
+
+1. Set up [Version control in Visual Studio Code](https://code.visualstudio.com/docs/editor/versioncontrol)
+
+1. Download Ubuntu from the command prompt
+
+    ```powershell
+    Invoke-WebRequest -Uri https://aka.ms/wslubuntu2004 -OutFile Ubuntu.appx -UseBasicParsing
+    ```
+
+1. Install your distro with PowerShell. Simply navigate to folder containing the distro downloaded from above `Ubuntu.appx`, and in that directory run the following command
+
+    ```powershell
+    Add-AppxPackage .\Ubuntu.appx
+    ```
+
+1. [Create a service principal](https://docs.microsoft.com/en-us/azure/app-service/deploy-github-actions?tabs=userlevel#generate-deployment-credentials)  to authenticate with Azure App Services for GitHub Actions
+
+    ```sh
+    subscription_name='Fire'
+    resource_group='firestationhub'
+    webapp='firestationhub'
+    subscription=$(az account list --output table | grep ${subscription_name} | awk '{print $3}')
+    az ad sp create-for-rbac \
+        --name 'firestationhub' \
+        --role 'contributor' \
+        --scopes /subscriptions/$subscription/resourceGroups/$resource_group/providers/Microsoft.Web/sites/$webapp \
+        --sdk-auth
     ```
 
 1. Configure continuous deployment from the GitHub repository `lacofd/firestationhub`
@@ -96,9 +134,27 @@
 
 To embed an Excel workbook, replicate the following procedure
 
-1. Upload a new or existing Excel workbook to the [Microsoft 365 Portal](https://www.office.com) and select the workbook
-1. [Enable co-authoring in Excel](https://support.microsoft.com/en-us/office/collaborate-on-excel-workbooks-at-the-same-time-with-co-authoring-7152aa8b-b791-414c-a3bb-3024e46fb104#PickTab=Web)
+1. Open up the [Microsoft 365 Portal](https://www.office.com) and create a workbook for the Duty Report, optionally using one of Microsoft's three relevant templates:
+    1. [Employee shift schedule](https://templates.office.com/en-us/employee-shift-schedule-tm16400192)
+    1. [Weekly employee shift schedule](https://templates.office.com/en-us/weekly-employee-shift-schedule-tm03986951)
+    1. [Shift work calendar](https://templates.office.com/en-us/shift-work-calendar-tm89105255)
+1. [Enable co-authoring in Excel](https://support.microsoft.com/en-us/office/collaborate-on-excel-workbooks-at-the-same-time-with-co-authoring-7152aa8b-b791-414c-a3bb-3024e46fb104#picktab=web)
 1. [Share the Excel workbook with others](https://support.microsoft.com/en-us/office/share-your-excel-workbook-with-others-8d8a52bb-03c3-4933-ab6c-330aabf1e589)
 1. Select *People you specify can edit* to restrict access and then select *Copy link*
 1. In `./index.html`, replace the `href` attribute of the `<a>` tag with title `Daily Duty Coverage` with the link you copied to your clipboard in the previous step
+
+
+## Useful Resources
+
+* [Continuous delivery by using GitHub Action](https://docs.microsoft.com/en-us/azure/azure-functions/functions-how-to-github-actions?tabs=dotnet)
+* [Creating a website in a single `az` command](https://docs.microsoft.com/en-us/azure/app-service/quickstart-html#create-a-web-app)
+* [Quickstart: Building your first static web app using the Azure CLI](https://docs.microsoft.com/en-us/azure/static-web-apps/get-started-cli?tabs=vanilla-javascript)
+* [Visual Studio Code's plugin for Azure Static Web Apps](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurestaticwebapps)
+
+## The road ahead
+
+* [Upload the PDF files to Azure blob storage](https://docs.microsoft.com/en-us/cli/azure/storage/blob?view=azure-cli-latest#az_storage_blob_upload_batch)
+* [Configure encrypted secrets](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets)
+* [Configure build with GitHub Actions](https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions)
+* [Configure your App Service or Azure Functions app to use Azure AD login](https://docs.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad#advanced) or some other form of [Azure App Service access restrictions](https://docs.microsoft.com/en-us/azure/app-service/app-service-ip-restrictions)
 
