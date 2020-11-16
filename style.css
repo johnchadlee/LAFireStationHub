@@ -1,12 +1,39 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400;1,700&display=swap');
-
 :root {
-  --gold: #d4ba6b;
+  --yellow: #d4ba6b;
   --red: #d9534f;
   --white: #ffffff;
   --light-gray: #a0a0a0;
   --dark-gray: #363636;
   --black: #1a1a1a;
+}
+
+:root {
+  --blue: #007bff;
+  --light-blue: #80bdff;
+  --indigo: #6610f2;
+  --purple: #6f42c1;
+  --pink: #e83e8c;
+  --orange: #fd7e14;
+  --green: #28a745;
+  --teal: #20c997;
+  --cyan: #17a2b8;
+  --gray: #6c757d;
+  --gray-dark: #343a40;
+  --primary: var(--blue);
+  --secondary: var(--gray);
+  --success: var(--green);
+  --info: var(--cyan);
+  --warning: var(--yellow);
+  --danger: var(--red);
+  --light: #f8f9fa;
+  --dark: var(--gray-dark);
+  --breakpoint-xs: 0;
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+  --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 body {
@@ -52,15 +79,6 @@ main {
   color: white;
 }
 
-input#query {
-  box-sizing: border-box;
-  margin: 0;
-  border: none;
-  padding: 8px 16px;
-  font-size: 1.2rem;
-  width: 80%;
-}
-
 main > section.search {
   align-items: center;
   background-color: var(--dark-gray);
@@ -73,7 +91,7 @@ main > section.search {
   height: min(300px, 30vh);
   justify-content: space-evenly;
   margin-top: 5vh;
-  transition: 0.3s;
+  transition: 0.5s;
   width: 60vw;
 }
 
@@ -89,5 +107,62 @@ main > section.search {
   main > section.search {
     width: 100%;
   }
+}
+
+form {
+  display: flex;
+  padding: 1rem 15px;
+  width: min(100%, 500px);
+  gap: 12px;
+}
+
+form > label > input {
+  width: 100%;
+  height: 100%;
+}
+
+form > label {
+  width: 100%;
+  flex: 1;
+}
+
+/* https://developer.mozilla.org/en-US/docs/Learn/Forms/Advanced_form_styling#Taming_search_boxes */
+form > label > input[type="search"] {
+  text-overflow: ellipsis;
+  outline-offset: 2px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  border: none;
+  padding: 8px 16px;
+  font-size: 1.2rem;
+}
+
+form > input[type="submit"] {
+  flex: 0;
+  height: 100%;
+  background-color: var(--blue);
+  color: var(--white);
+  border: none;
+}
+
+input {
+  color: var(--black);
+  background-color: var(--white);
+  background-clip: padding-box;
+  border: 1px solid var(--light-gray);
+  border-radius: .25rem;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  font-size: 16px;
+  font-weight: 300;
+  padding: 4px 12px;
+}
+
+input:focus {
+  color: var(--dark-gray);
+  outline: 0;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 2px #4d90fe;
 }
 

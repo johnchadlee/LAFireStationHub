@@ -11,13 +11,20 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Fire Station Hub</title>
   <link href="style.css" rel="stylesheet" type="text/css">
-  <script type="module">
+  <script src="search.js" type="module"></script>
+  <script defer>
     document.addEventListener('DOMContentLoaded', (event) => {
-      document.querySelector('input#query').addEventListener((event) => {
+      document.querySelector('input#query')
+          .addEventListener('submit', (event) => {
 
-      })
+          })
     })
   </script>
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+  >
 
 </head>
 <body>
@@ -30,17 +37,20 @@
   <main>
     <section class="search">
       <header>Fire Station Hub</header>
-      <label for="query"></label>
-      <input
-          autocapitalize="off"
-          autocomplete="off"
-          autofocus
-          id="query"
-          name="query"
-          placeholder="Search for a document"
-          type="search"
-      >
-      <!-- <iframe width="402" height="346" frameborder="0" scrolling="no" src="https://uscedu-my.sharepoint.com/personal/johncl_usc_edu/_layouts/15/Doc.aspx?sourcedoc={511d5a72-d2ff-46c7-a82d-f19de320b3bc}&action=embedview&wdAllowInteractivity=False&wdHideGridlines=True&wdHideHeaders=True&wdDownloadButton=True&wdInConfigurator=True"></iframe> -->
+      <form>
+        <label>
+          <input
+              autocapitalize="off"
+              autocomplete="off"
+              autofocus
+              id="query"
+              name="query"
+              placeholder="Search for a document"
+              type="search"
+          >
+        </label>
+        <input type="submit" value="Submit">
+      </form>
     </section>
     <section class="results">
       <div class="result">
@@ -53,6 +63,7 @@
           proudly participated and joined in the centennial \ncelebration by
           recognizing this important milestone.</p>
       </div>
+
     </section>
   </main>
 </body>

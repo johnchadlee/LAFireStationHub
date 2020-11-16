@@ -1,53 +1,38 @@
-import {
-  AzureKeyCredential, SearchClient, SearchIndexClient, SearchIndexerClient
-} from '@azure/search-documents'
+import {env} from 'process'
 
-const primaryKey = '7A27B85012A2A27B3665541D52E179FF'
+import {AzureKeyCredential, SearchClient} from '@azure/search-documents'
 
 const blobStorageService = 'fshstorage'
 const blobStorageContainer = 'fshcontainer'
 const blobStorageEndpoint = `https://${blobStorageService}.blob.core.windows.net/${blobStorageContainer}`
 
-const cognitiveSearchService = 'fshsearch'
-const cognitiveSearchIndex = 'fshindex'
+const cognitiveSearchService = 'fshsearchbot'
+const cognitiveSearchIndex = 'fshindexbot'
 const cognitiveSearchEndpoint = `https://${cognitiveSearchService}.search.windows.net`
+
+const cognitiveSearchCredentials = new AzureKeyCredential(env['SEARCH_API_KEY'])
 
 // To query and manipulate documents
 const searchClient = new SearchClient(cognitiveSearchEndpoint,
     cognitiveSearchIndex,
-    new AzureKeyCredential(primaryKey)
-)
-
-// To manage indexes and synonymmaps
-const indexClient = new SearchIndexClient(cognitiveSearchEndpoint,
-    new AzureKeyCredential(primaryKey)
-)
-
-// To manage indexers, datasources and skillsets
-const indexerClient = new SearchIndexerClient(cognitiveSearchEndpoint,
-    new AzureKeyCredential(primaryKey)
+    cognitiveSearchCredentials
 )
 
 // Let's get the top 5 jobs related to Microsoft
-async function search() {
-  const searchResults = await searchClient.search('Microsoft', {top: 5})
-  for await (const result of searchResults.results) {
-    let doc = result.document
-    console.log(doc['content'])
-    console.log(`${result.document.business_title}\n${result.document.job_description}\n`)
-  }
+async function search(query) {
+  let searchResults = await searchClient.search(query, {
+    orderBy: ['Rating desc'],
+    select: ['HotelId', 'HotelName', 'Rating'],
+    top: 5
+  })
   try {
-    response = await response.json()
-    for (let item of response) {
-      createResult(item)
+    for await (const result of searchResults.results) {
+      console.log(`${JSON.stringify(result.document)}`)
+      // createResult(item)
     }
   } catch (error) {
     throw error
   }
-}
-
-/* -------------------------------------- */
-
 }
 
 function createResult(item) {
@@ -65,5 +50,4 @@ function createResult(item) {
   results.append(div)
 }
 
-export default handleSearch
 
