@@ -5,19 +5,27 @@
   <meta content="Los Angeles County Fire Department" name="author">
   <meta content="fire, station, hub, firefighter, search" name="keywords">
   <meta
+      content="https://upload.wikimedia.org/wikipedia/commons/4/43/Seal_of_the_Los_Angeles_County_Fire_Department.png"
+      property="og:image"
+  >
+  <meta
+      content="Fire Station Hub" property="og:title"
+  >
+  <meta
       content="Search LA County Fire Department for documents"
       name="description"
   >
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Fire Station Hub</title>
   <link href="style.css" rel="stylesheet" type="text/css">
-  <script src="search.js" type="module"></script>
+  <script src="search.js"></script>
   <script defer>
     document.addEventListener('DOMContentLoaded', (event) => {
-      document.querySelector('input#query')
-          .addEventListener('submit', (event) => {
-
-          })
+      let query = document.querySelector('input#query')
+      document.addEventListener('submit', (event) => {
+        event.preventDefault()
+        let results = search(query.value)
+      })
     })
   </script>
   <link href="https://fonts.gstatic.com" rel="preconnect">
@@ -53,16 +61,6 @@
       </form>
     </section>
     <section class="results">
-      <div class="result">
-        <cite>2019-10-31T00:15:15Z</cite>
-        <header>ET-268.pdf</header>
-        <p>This entire year, the Los Angeles County Board of \nSupervisors is
-          commemorating and celebrating \nthe 100th year of the ratification of
-          the Nineteenth \nAmendment which grants women with the right to
-          \nvote.\nAlong with other County partners, our Department \nhas
-          proudly participated and joined in the centennial \ncelebration by
-          recognizing this important milestone.</p>
-      </div>
 
     </section>
   </main>

@@ -1,53 +1,97 @@
-import {env} from 'process'
-
-import {AzureKeyCredential, SearchClient} from '@azure/search-documents'
-
 const blobStorageService = 'fshstorage'
 const blobStorageContainer = 'fshcontainer'
 const blobStorageEndpoint = `https://${blobStorageService}.blob.core.windows.net/${blobStorageContainer}`
 
 const cognitiveSearchService = 'fshsearchbot'
-const cognitiveSearchIndex = 'fshindexbot'
+const cognitiveSearchIndex = 'fshindex'
 const cognitiveSearchEndpoint = `https://${cognitiveSearchService}.search.windows.net`
+const cognitiveSearchQueryKey = '547AC2CE6DDCA06C68A229F305AE5B76'
 
-const cognitiveSearchCredentials = new AzureKeyCredential(env['SEARCH_API_KEY'])
+/*
+ Search Documents (Azure Cognitive Search REST API
+ https://docs.microsoft.com/en-us/rest/api/searchservice/search-documents
+ */
+const search = async (query) => {
 
-// To query and manipulate documents
-const searchClient = new SearchClient(cognitiveSearchEndpoint,
-    cognitiveSearchIndex,
-    cognitiveSearchCredentials
-)
+  let results = document.querySelector('section.results')
+  while (results.hasChildNodes()) {
+    results.removeChild(results.firstChild)
+  }
 
-// Let's get the top 5 jobs related to Microsoft
-async function search(query) {
-  let searchResults = await searchClient.search(query, {
-    orderBy: ['Rating desc'],
-    select: ['HotelId', 'HotelName', 'Rating'],
-    top: 5
-  })
+  let body = {
+    'search': query,
+    'top': 3, // 'select':
+              // 'content,metadata_storage_name,metadata_storage_path,metadata_storage_last_modified',
+    'highlight': 'content-1,metadata_storage_name-1',
+    'highlightPreTag': '<strong>',
+    'highlightPostTag': '</strong>'
+  }
+
+  let options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'api-key': cognitiveSearchQueryKey
+    },
+    body: JSON.stringify(body),
+    redirect: 'follow'
+  }
+  let url = new URL(cognitiveSearchEndpoint)
+  url.pathname = `/indexes/${cognitiveSearchIndex}/docs/search`
+  url.search = new URLSearchParams({'api-version': '2020-06-30'})
   try {
-    for await (const result of searchResults.results) {
-      console.log(`${JSON.stringify(result.document)}`)
-      // createResult(item)
+    let response = await fetch(url.href, options)
+    response = await response.json()
+    if (response['value'].length === 0) {
+      let a = document.createElement('a')
+      let header = document.createElement('header')
+      header.innerText = 'No results found.'
+      a.appendChild(header)
+      results.appendChild(a)
+    }
+    for (const item of response['value']) {
+      createResult(item)
     }
   } catch (error) {
-    throw error
+    console.error(error)
   }
 }
 
+// Let's get the top 5 jobs related to Microsoft
+
 function createResult(item) {
   let results = document.querySelector('section.results')
-  let div = document.createElement('div')
-  let date = document.createElement('cite')
-  date.innerText = item['metadata_creation_date']
+
+  /* Format the entry's title */
   let title = document.createElement('header')
-  title.innerText = item['metadata_storage_name']
-  let anchor = document.createElement('a')
-  anchor.href = ''
-  let content = document.createElement('p')
-  content.innerText = item['content']
-  div.append(date, title, content)
-  results.append(div)
+  if (item['@search.highlights']['metadata_storage_name']) {
+    title.innerHTML = item['@search.highlights']['metadata_storage_name']
+  }
+  else {
+    title.innerHTML = item['metadata_storage_name']
+  }
+
+  /* Create an anchor that links to the document */
+  let entry = document.createElement('a')
+  let encoded = item['metadata_storage_path']
+  entry.href = atob(encoded.substring(0, encoded.length - 1))
+
+  /* Format the entry's date */
+  if (item['metadata_storage_last_modified']) {
+    let moment = new Date(item['metadata_storage_last_modified'])
+    let date = document.createElement('cite')
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+    date.innerText = formatter.format(moment)
+    entry.append(title, date)
+  }
+  else {
+    entry.append(title)
+  }
+  results.append(entry)
 }
 
 
